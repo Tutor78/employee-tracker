@@ -23,13 +23,26 @@ menu = async () => {
             {
                 type: 'list',
                 name: 'search',
-                message: 'Would you like to search the database?',
-                choices: ['Yes', 'No']
+                message: 'What would you like to do?',
+                choices: [
+                    'View All Employees', 
+                    'View All Employees By Department',
+                    'View All Employees By Manager',
+                    'View All Employees By Role',
+                    'Add Employee',
+                    'Update Employee Role',
+                    'Update Employee Manager',
+                    'View All Roles',
+                    'View All Departments',
+                    'Add Department',
+                    'Update Department',
+                    'Exit'
+                ]
             }
         ]);
     
-    if (response.search == 'Yes') {
-        db.query('SELECT * FROM candidates', (err, rows) => {
+    if (response.search == 'View All Employees') {
+        db.query('SELECT * FROM employee', (err, rows) => {
             if (err) {
                 console.log(err);
             }
@@ -38,7 +51,7 @@ menu = async () => {
             menu();
             return;
         });
-    } else {
+    } else if (response.search == 'Exit') {
         db.end();
         return;
     }

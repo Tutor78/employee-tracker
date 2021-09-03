@@ -1,6 +1,6 @@
 INSERT INTO department (name)
 VALUES
-    ('General'),
+    ('Management'),
     ('Irrigation'),
     ('Chemical'),
     ('Maintenance');
