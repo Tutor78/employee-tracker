@@ -14,7 +14,7 @@ const db = mysql.createConnection(
         password: process.env.db_pass,
         database: 'employees_db'
     },
-    console.log('Connected to the election database.')
+    console.log('Connected to the employee database.')
 );
 
 menu = async () => {
@@ -58,121 +58,130 @@ menu = async () => {
             return;
         });
     } else if (response.search === 'View All Employees By Department') {
-        inquirer.prompt([
-            {
-                type: 'list',
-                name: 'department',
-                message: 'Which department would you like to search by?',
-                choices: ['Management', 'Irrigation', 'Chemical', 'Maintenance']
-            }
-        ]).then(response => {
-            const sql = `SELECT employee.id, employee.first_name, employee.last_name, role.title AS role, department.name AS department
-                            FROM employee
-                            JOIN role on employee.role_id = role.id
-                            JOIN department ON role.department_id = department.id
-                            WHERE department.id = ?`;
-            let params;
+        db.query(`SELECT department.name FROM department`, (err, result) => {
+            const departmentArr = [];
 
-            if(response.department=== 'Management') {
-                params = 1;
-            } else if (response.department === 'Irrigation') {
-                params = 2;
-            } else if (response.department === 'Chemical') {
-                params = 3;
-            } else {
-                params = 4;
+            for (let i = 0; i < result.length; i++) {
+                departmentArr.push(result[i].name);
             }
 
-            db.query(sql, params, (err, rows) => {
-                if (err) {
-                    console.log(err);
+            inquirer.prompt([
+                {
+                    type: 'list',
+                    name: 'department',
+                    message: 'Which department would you like to search by?',
+                    choices: departmentArr
                 }
+            ]).then(response => {
+                const sql = `SELECT employee.id, employee.first_name, employee.last_name, role.title AS role, department.name AS department
+                                FROM employee
+                                JOIN role on employee.role_id = role.id
+                                JOIN department ON role.department_id = department.id
+                                WHERE department.name = ?`;
 
-                console.table(rows);
-                menu();
-                return;
+                let params = response.department;
+    
+                db.query(sql, params, (err, rows) => {
+                    if (err) {
+                        console.log(err);
+                    }
+    
+                    console.table(rows);
+                    menu();
+                    return;
+                })
             })
+            
         })
-
     } else if (response.search === 'View All Employees By Manager') {
-        inquirer.prompt([
-            {
-                type: 'list',
-                name: 'manager',
-                message: 'Which manager would you like to search by?',
-                choices: ['Ronald Jackson', 'Timothy Gates', 'Jackson Smith']
-            }
-        ]).then(response => {
-            const sql = `SELECT employee.id, employee.first_name, employee.last_name, role.title AS role, department.name AS department
-                            FROM employee
-                            JOIN role on employee.role_id = role.id
-                            JOIN department ON role.department_id = department.id
-                            WHERE employee.manager_id = ?`;
-            let params;
+        db.query(`SELECT employee.id, employee.first_name, employee.last_name FROM employee WHERE employee.manager_id IS NULL`, (err, response) => {
+            const managerArr = [];
 
-            if (response.manager === 'Ronald Jackson') {
-                params = 101;
-            } else if (response.manager === 'Timothy Gates') {
-                params = 102;
-            } else {
-                params = 103;
+            for (let i = 0; i < response.length; i++) {
+                let managerName = response[i].first_name + ' ' + response[i].last_name;
+                let managerId = response[i].id
+
+                const managerObj = {};
+                managerObj.name = managerName;
+                managerObj.id = managerId;
+
+                managerArr.push(managerObj);
             }
 
-            db.query(sql, params, (err, rows) => {
-                if (err) {
-                    console.log(err);
+            inquirer.prompt([
+                {
+                    type: 'list',
+                    name: 'manager',
+                    message: 'Which manager would you like to search by?',
+                    choices: managerArr
                 }
+            ]).then(response => {
+                const sql = `SELECT employee.id, employee.first_name, employee.last_name, role.title AS role, department.name AS department
+                                FROM employee
+                                JOIN role on employee.role_id = role.id
+                                JOIN department ON role.department_id = department.id
+                                WHERE employee.manager_id = ?`;
+                
+                let params;
 
-                console.table(rows);
-                menu();
-                return;
+                for (let i = 0; i < managerArr.length; i++) {
+                    if (response.manager === managerArr[i].name) {
+                        params = managerArr[i].id;
+                    }
+                }
+    
+                db.query(sql, params, (err, rows) => {
+                    if (err) {
+                        console.log(err);
+                    }
+    
+                    console.table(rows);
+                    menu();
+                    return;
+                })
             })
-
         })
     } else if (response.search === 'View All Employees By Role') {
-        inquirer.prompt([
-            {
-                type: 'list',
-                name: 'role',
-                message: 'Which role would you like to search by?',
-                choices: [
-                            'Area Manager', 
-                            'Irrigation Tech',
-                            'Spray Tech', 
-                            'Crew Leader', 
-                            'Crew Member'
-                        ]
-            }
-        ]).then(response => {
-            const sql = `SELECT employee.id, employee.first_name, employee.last_name, role.title AS role, department.name AS department
-                            FROM employee
-                            JOIN role ON employee.role_id = role.id
-                            JOIN department ON role.department_id = department.id
-                            WHERE employee.role_id = ?`;
-            let params;
-
-            if (response.role === 'Area Manager') {
-                params = 1;
-            } else if (response.role === 'Irrigation Tech') {
-                params = 2;
-            } else if (response.role === 'Spray Tech') {
-                params = 3;
-            } else if (response.role === 'Crew Leader') {
-                params = 4;
-            } else {
-                params = 5;
+        db.query(`SELECT role.title FROM role`, (err, response) => {
+            if (err) {
+                console.log(err);
             }
 
-            db.query(sql, params, (err, rows) => {
-                if (err) {
-                    console.log(err);
+            const roleArr = [];
+
+            for (let i = 0; i < response.length; i++) {
+                roleArr.push(response[i].title);
+            }
+
+            // console.log(roleArr);
+
+            inquirer.prompt([
+                {
+                    type: 'list',
+                    name: 'role',
+                    message: 'Which role would you like to search by?',
+                    choices: roleArr
                 }
+            ]).then(response => {
+                const sql = `SELECT employee.id, employee.first_name, employee.last_name, role.title AS role, department.name AS department
+                                FROM employee
+                                JOIN role ON employee.role_id = role.id
+                                JOIN department ON role.department_id = department.id
+                                WHERE role.title = ?`;
 
-                console.table(rows);
-                menu();
-                return;
-            })
-        })
+                let params = response.role;
+    
+                db.query(sql, params, (err, rows) => {
+                    if (err) {
+                        console.log(err);
+                    }
+    
+                    console.table(rows);
+                    menu();
+                    return;
+                });
+            });
+        });
     }else if (response.search === 'Exit') {
         db.end();
         return;
