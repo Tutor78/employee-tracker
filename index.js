@@ -64,7 +64,7 @@ menu = async () => {
     } else if (response.search === 'Update Employee') {
         updateEmployee(db);
     } else if (response.search === 'Delete Employee') {
-        
+        deleteEmployee(db);
     } else if (response.search === 'View All Roles') {
         viewRoles(db);
     } else if (response.search === 'Add Role') {
