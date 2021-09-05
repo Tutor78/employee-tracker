@@ -1,10 +1,10 @@
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 const cTable = require('console.table');
-const { allEmployees, employeeDepartments, employeeManagers, employeeRoles, addEmployee } = require('./lib/menuFunctions');
-const { updateEmployee, searchRoles } = require('./lib/menuFunctions');
-const NumberPrompt = require('inquirer/lib/prompts/number');
 
+const { allEmployees, employeeDepartments, employeeManagers, employeeRoles, addEmployee, updateEmployee, deleteEmployee } = require('./lib/employeeFunctions');
+const { viewRoles, addRole, updateRole, deleteRole } = require('./lib/roleFunctions');
+const { viewDepartments, addDepartment, updateDepartment, deleteDepartment } = require('./lib/departmentFunctions');
 
 require('dotenv').config();
 
@@ -35,16 +35,21 @@ menu = async () => {
                     'View All Employees By Role',
                     'Add Employee',
                     'Update Employee',
+                    'Delete Employee',
                     'View All Roles',
                     'Add Role',
                     'Update Role',
+                    'Delete Role',
                     'View All Departments',
                     'Add Department',
                     'Update Department',
+                    'Delete Department',
                     'Exit'
                 ]
             }
         ]);
+
+    // console.log(response);
     
     if (response.search === 'View All Employees') {
         allEmployees(db);
@@ -57,41 +62,25 @@ menu = async () => {
     } else if (response.search === 'Add Employee') {
         addEmployee(db);
     } else if (response.search === 'Update Employee') {
-        db.query(`SELECT employee.first_name, employee.last_name FROM employee ORDER BY employee.first_name ASC`, (err, result) => {
-            const employeeArr = [];
-
-            for (let i = 0; i < result.length; i++) {
-                const firstName = result[i].first_name;
-                const lastName = result[i].last_name;
-
-                const employeeName = firstName + ' ' + lastName;
-
-                employeeArr.push(employeeName);
-            }
-
-            inquirer.prompt([
-                {
-                    type: 'list',
-                    name: 'employee',
-                    message: "Which employee's record would you like to update?",
-                    choices: employeeArr
-                }
-            ]).then(response => {
-                console.log(response);
-            })
-        })
+        updateEmployee(db);
+    } else if (response.search === 'Delete Employee') {
+        
     } else if (response.search === 'View All Roles') {
-        searchRoles(db);
+        viewRoles(db);
     } else if (response.search === 'Add Role') {
 
     } else if (response.search === 'Update Role') {
 
+    } else if (response.search === 'Delete Role') {
+        deleteRole(db);
     } else if (response.search === 'View All Departments') {
-
+        viewDepartments(db);
     } else if (response.search === 'Add Department') {
 
     } else if (response.search === 'Update Department') {
 
+    } else if (response.search === 'Delete Department') {
+        deleteDepartment(db);
     } else if (response.search === 'Exit') {
         db.end();
         return;
