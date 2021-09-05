@@ -2,6 +2,7 @@ const mysql = require('mysql2');
 const inquirer = require('inquirer');
 const cTable = require('console.table');
 const { allEmployees, employeeDepartments, employeeManagers, employeeRoles, addEmployee } = require('./lib/menuFunctions');
+const { updateEmployee, searchRoles } = require('./lib/menuFunctions');
 const NumberPrompt = require('inquirer/lib/prompts/number');
 
 
@@ -56,9 +57,31 @@ menu = async () => {
     } else if (response.search === 'Add Employee') {
         addEmployee(db);
     } else if (response.search === 'Update Employee') {
+        db.query(`SELECT employee.first_name, employee.last_name FROM employee ORDER BY employee.first_name ASC`, (err, result) => {
+            const employeeArr = [];
 
+            for (let i = 0; i < result.length; i++) {
+                const firstName = result[i].first_name;
+                const lastName = result[i].last_name;
+
+                const employeeName = firstName + ' ' + lastName;
+
+                employeeArr.push(employeeName);
+            }
+
+            inquirer.prompt([
+                {
+                    type: 'list',
+                    name: 'employee',
+                    message: "Which employee's record would you like to update?",
+                    choices: employeeArr
+                }
+            ]).then(response => {
+                console.log(response);
+            })
+        })
     } else if (response.search === 'View All Roles') {
-
+        searchRoles(db);
     } else if (response.search === 'Add Role') {
 
     } else if (response.search === 'Update Role') {
