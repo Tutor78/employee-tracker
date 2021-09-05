@@ -1,7 +1,8 @@
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 const cTable = require('console.table');
-const { allEmployees, employeeDepartments, employeeManagers, employeeRoles } = require('./lib/menuFunctions');
+const { allEmployees, employeeDepartments, employeeManagers, employeeRoles, addEmployee } = require('./lib/menuFunctions');
+const NumberPrompt = require('inquirer/lib/prompts/number');
 
 
 require('dotenv').config();
@@ -53,7 +54,7 @@ menu = async () => {
     } else if (response.search === 'View All Employees By Role') {
         employeeRoles(db);
     } else if (response.search === 'Add Employee') {
-
+        addEmployee(db);
     } else if (response.search === 'Update Employee') {
 
     } else if (response.search === 'View All Roles') {

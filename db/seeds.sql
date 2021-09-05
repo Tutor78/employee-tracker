@@ -19,9 +19,9 @@ VALUES
     (102, 'Timothy', 'Gates', 1, NULL),
     (103, 'Jackson', 'Smith', 1, NULL),
     (301, 'Trent', 'Mathers', 2, 101),
-    (401, 'Warner', 'Bradford', 2, 101),
-    (501, 'Dan', 'Elliston', 3, 102),
-    (551, 'Lula', 'Braxton', 4, 103),
-    (552, 'Aura', 'Tennison', 5, 103),
-    (553, 'Liliana', 'Cason', 5, 103),
-    (554, 'Boyd', 'Sergeant', 5, 103);
+    (302, 'Warner', 'Bradford', 2, 101),
+    (401, 'Dan', 'Elliston', 3, 102),
+    (501, 'Lula', 'Braxton', 4, 103),
+    (551, 'Aura', 'Tennison', 5, 103),
+    (552, 'Liliana', 'Cason', 5, 103),
+    (553, 'Boyd', 'Sergeant', 5, 103);
