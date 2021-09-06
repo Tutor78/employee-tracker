@@ -8,18 +8,6 @@ const { viewDepartments, addDepartment, updateDepartment, deleteDepartment } = r
 
 require('dotenv').config();
 
-// Connect to database
-const db = mysql.createConnection(
-    {
-        host: 'localhost',
-        // Your MySql username,
-        user: process.env.db_user,
-        // Your MySql password
-        password: process.env.db_pass,
-        database: process.env.db_name
-    },
-    console.log('Welcome to the employee tracker!')
-);
 
 topMenu = async () => {
     const response = await inquirer.prompt([
@@ -27,33 +15,38 @@ topMenu = async () => {
             type: 'list',
             name: 'topMenu',
             message: 'What would you like to do?',
-            choices: ['Installation', 'Manage Database', 'Main Menu', 'Exit']
+            choices: ['Manage Database', 'Main Menu', 'Exit']
         }
     ]).then(response => {
-        if (response.topMenu === 'Installation') {
-            console.log('Installation coming soon!');
-            topMenu();
-        } else if (response.topMenu === 'Manage Database') {
+        if (response.topMenu === 'Manage Database') {
             console.log('Database management coming soon!');
             topMenu();
         } else if (response.topMenu === 'Main Menu') {
-            mainMenu();
+            // Connect to database
+            const db = mysql.createConnection(
+                {
+                    host: 'localhost',
+                    // Your MySql username,
+                    user: process.env.db_user,
+                    // Your MySql password
+                    password: process.env.db_pass,
+                    database: 'employees_db'
+                },
+                console.log('Connected to the employee databse!')
+            );
+            mainMenu(db);
         } else if (response.topMenu === 'Exit') {
             console.log('Goodbye!');
-            db.end();
+            process.exit();
         }
     })
 }
-
-isntallationMenu = async () => {
-    // installation menu goes here
-};
 
 databaseMenu = async () => {
     // database managerment code goes here
 };
 
-mainMenu = async () => {
+mainMenu = async (db) => {
     const response = await inquirer
         .prompt([
             {
@@ -118,4 +111,12 @@ mainMenu = async () => {
     }
 };
 
-topMenu();
+function init() {
+    console.log('Welcome to the employee tracker v 1.0!')
+
+    console.log('Please choose from the following items to continue!')
+
+    topMenu();
+}
+
+init();
