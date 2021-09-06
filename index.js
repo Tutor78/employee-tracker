@@ -13,15 +13,47 @@ const db = mysql.createConnection(
     {
         host: 'localhost',
         // Your MySql username,
-        user: 'root',
+        user: process.env.db_user,
         // Your MySql password
         password: process.env.db_pass,
-        database: 'employees_db'
+        database: process.env.db_name
     },
-    console.log('Connected to the employee database.')
+    console.log('Welcome to the employee tracker!')
 );
 
-menu = async () => {
+topMenu = async () => {
+    const response = await inquirer.prompt([
+        {
+            type: 'list',
+            name: 'topMenu',
+            message: 'What would you like to do?',
+            choices: ['Installation', 'Manage Database', 'Main Menu', 'Exit']
+        }
+    ]).then(response => {
+        if (response.topMenu === 'Installation') {
+            console.log('Installation coming soon!');
+            topMenu();
+        } else if (response.topMenu === 'Manage Database') {
+            console.log('Database management coming soon!');
+            topMenu();
+        } else if (response.topMenu === 'Main Menu') {
+            mainMenu();
+        } else if (response.topMenu === 'Exit') {
+            console.log('Goodbye!');
+            db.end();
+        }
+    })
+}
+
+isntallationMenu = async () => {
+    // installation menu goes here
+};
+
+databaseMenu = async () => {
+    // database managerment code goes here
+};
+
+mainMenu = async () => {
     const response = await inquirer
         .prompt([
             {
@@ -68,23 +100,22 @@ menu = async () => {
     } else if (response.search === 'View All Roles') {
         viewRoles(db);
     } else if (response.search === 'Add Role') {
-
+        addRole(db);
     } else if (response.search === 'Update Role') {
-
+        updateRole(db);
     } else if (response.search === 'Delete Role') {
         deleteRole(db);
     } else if (response.search === 'View All Departments') {
         viewDepartments(db);
     } else if (response.search === 'Add Department') {
-
+        addDepartment(db);
     } else if (response.search === 'Update Department') {
-
+        updateDepartment(db);
     } else if (response.search === 'Delete Department') {
         deleteDepartment(db);
     } else if (response.search === 'Exit') {
-        db.end();
-        return;
+        topMenu();
     }
 };
 
-menu();
+topMenu();
