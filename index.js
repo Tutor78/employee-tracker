@@ -19,10 +19,6 @@ topMenu = async () => {
         }
     ]).then(response => {
         if (response.topMenu === 'Manage Database') {
-            console.log('Database management coming soon!');
-            topMenu();
-        } else if (response.topMenu === 'Main Menu') {
-            // Connect to database
             const db = mysql.createConnection(
                 {
                     host: 'localhost',
@@ -34,6 +30,21 @@ topMenu = async () => {
                 },
                 console.log('Connected to the employee databse!')
             );
+
+            databaseMenu(db);
+        } else if (response.topMenu === 'Main Menu') {
+            // Connect to database
+            const db = mysql.createConnection(
+                {
+                    host: 'localhost',
+                    // Your MySql username,
+                    user: process.env.db_user,
+                    // Your MySql password
+                    password: process.env.db_pass,
+                    database: 'employees_db'
+                },
+                console.log('Connected to the employee database!')
+            );
             mainMenu(db);
         } else if (response.topMenu === 'Exit') {
             console.log('Goodbye!');
@@ -42,8 +53,60 @@ topMenu = async () => {
     })
 }
 
-databaseMenu = async () => {
-    // database managerment code goes here
+databaseMenu = async (db) => {
+    const response = await inquirer
+        .prompt([
+            {
+                type: 'list',
+                name: 'database',
+                message: 'What would you like to do?',
+                choices: ['View Tables', 'Retrieve Table Information', 'Reset Database', 'Exit']
+            }
+        ]).then(response => {
+            if (response.database === 'View Tables') {
+                const sql = `SHOW TABLES`;
+
+                db.query(sql, (err, result) => {
+                    if (err) {
+                        console.log(err);
+                    }
+
+                    console.table(result);
+
+                    databaseMenu(db);
+                    return;
+                })
+            } else if (response.database === 'Retrieve Table Information') {
+                inquirer.prompt([
+                    {
+                        type: 'list',
+                        name: 'table',
+                        message: 'Which table would you like more information about?',
+                        choices: ['Department', 'Role', 'Employee']
+                    }
+                ]).then(response => {
+                    const sql = `SELECT COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, COLUMN_KEY, IS_NULLABLE
+                                    FROM INFORMATION_SCHEMA.COLUMNS
+                                    WHERE TABLE_NAME = ?`;
+
+                    let params = response.table.toLowerCase();
+
+                    db.query(sql, params, (err, result) => {
+                        console.table(result);
+
+                        databaseMenu(db);
+                        return;
+                    })
+                })
+            } else if (response.database === 'Reset Database') {
+                console.log('This feature is coming soon!');
+                databaseMenu();
+                return;
+            } else if (response.database === 'Exit') {
+                topMenu();
+                return;
+            }  
+        })
 };
 
 mainMenu = async (db) => {
