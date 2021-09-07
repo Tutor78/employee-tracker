@@ -1,4 +1,4 @@
-const { topMenu } = require('./lib/menuFunctions');
+const { topMenu } = require('./utils/menuFunctions');
 
 function init() {
     console.log('Welcome to the employee tracker v 1.0!')
