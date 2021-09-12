@@ -23,7 +23,7 @@ well as MySql server setup with a username and password. After the files, and as
 
 ## Usage
 
-After all dependacies are installed on your computer, open the command line and navigate to the root directory that contains app.js. While there run ```npm start```. This will begin the program and you will be greeted with the top menu. From here you can manage the database (see roadmap below) and also enter the main menu. While on the main menu you will be shown multiple options. For each one you choose follow the prompts that are shown to use the application. A video demonstration can be found [here](#).
+After all dependacies are installed on your computer, open the command line and navigate to the root directory that contains app.js. While there run ```npm start```. This will begin the program and you will be greeted with the top menu. From here you can manage the database (see roadmap below) and also enter the main menu. While on the main menu you will be shown multiple options. For each one you choose follow the prompts that are shown to use the application. A video demonstration can be found [here](https://drive.google.com/file/d/1nB7XridCWur044V42qZpnXaNr2kQmJ9w/view).
 
 ## License
 
@@ -45,7 +45,7 @@ This project is current licensed under the [MIT](LICENSE) license.
 
 This app is currently quite basic but I plan on adding a handful of features in the future which include:
 
-    * The ability to create, name, and connect to different databases
-    * The ability to update and add tables to the database
     * Incorporating an embedded database to help make the application stand alone
+    * Allowing the user to customize the database as they need
+    * Fix various bugs that will be added to the issues for this repository
     * Any other features to be added will be included here
